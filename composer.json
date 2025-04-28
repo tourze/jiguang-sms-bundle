@@ -22,7 +22,7 @@
     "tourze/doctrine-track-bundle": "0.0.*",
     "tourze/doctrine-timestamp-bundle": "0.0.*",
     "tourze/doctrine-user-bundle": "0.0.*",
-    "tourze/http-client-bundle": "0.0.*",
+    "tourze/http-client-bundle": "0.1.*",
     "tourze/symfony-cron-job-bundle": "0.1.*",
     "yiisoft/json": "^1.0"
   },
