@@ -23,12 +23,17 @@
     "tourze/doctrine-timestamp-bundle": "0.0.*",
     "tourze/doctrine-user-bundle": "0.0.*",
     "tourze/http-client-bundle": "0.0.*",
-    "tourze/symfony-cron-job-bundle": "0.0.*",
+    "tourze/symfony-cron-job-bundle": "0.1.*",
     "yiisoft/json": "^1.0"
   },
   "autoload": {
     "psr-4": {
       "JiguangSmsBundle\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "JiguangSmsBundle\\Tests\\": "tests"
     }
   },
   "require-dev": {
