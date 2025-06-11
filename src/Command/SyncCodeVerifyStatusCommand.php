@@ -45,7 +45,7 @@ class SyncCodeVerifyStatusCommand extends Command
             try {
                 $this->syncCodeStatus($code);
                 $count++;
-            } catch (\Throwable $e) {
+            } catch  (\Throwable $e) {
                 $output->writeln(sprintf(
                     '<error>同步验证码[%s]状态失败: %s</error>',
                     $code->getMsgId(),
@@ -70,7 +70,7 @@ class SyncCodeVerifyStatusCommand extends Command
         try {
             $this->jiguangSmsService->request($request);
             $code->setVerified(true);
-        } catch (\Throwable $e) {
+        } catch  (\Throwable $e) {
             // 如果验证失败,说明验证码无效
             if ($e->getCode() === 50020) {
                 $code->setVerified(false);
