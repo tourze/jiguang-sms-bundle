@@ -51,7 +51,6 @@ class WithAccountRequestTest extends TestCase
         $this->assertEquals('POST', $this->request->getRequestMethod());
 
         $options = $this->request->getRequestOptions();
-        $this->assertIsArray($options);
         $this->assertArrayHasKey('query', $options);
         $this->assertEquals(['param' => 'value'], $options['query']);
     }

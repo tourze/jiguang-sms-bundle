@@ -5,15 +5,11 @@ namespace JiguangSmsBundle\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
-use Tourze\EasyAdmin\Attribute\Column\ExportColumn;
-use Tourze\EasyAdmin\Attribute\Column\ListColumn;
 
 #[ORM\MappedSuperclass]
 abstract class AbstractCode
 {
     use TimestampableAware;
-    #[ListColumn(order: -1)]
-    #[ExportColumn]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
