@@ -8,8 +8,8 @@ use JiguangSmsBundle\Repository\AccountBalanceRepository;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 
 #[ORM\Entity(repositoryClass: AccountBalanceRepository::class)]
-#[ORM\Table(name: 'jg_sms_account_balance')]
-class AccountBalance
+#[ORM\Table(name: 'jg_sms_account_balance', options: ['comment' => '极光短信账号余量'])]
+class AccountBalance implements \Stringable
 {
     use TimestampableAware;
     #[ORM\Id]
@@ -18,7 +18,7 @@ class AccountBalance
     private ?int $id = 0;
 
     #[ORM\OneToOne(targetEntity: Account::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, options: ['comment' => '账号ID'])]
     private Account $account;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['comment' => '全类型短信余量'])]
@@ -91,4 +91,15 @@ class AccountBalance
     {
         $this->market = $market;
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('账号%s 余量: 全类型=%d, 语音=%d, 行业=%d, 营销=%d', 
+            $this->account->getTitle() ?? 'Unknown',
+            $this->balance ?? 0,
+            $this->voice ?? 0,
+            $this->industry ?? 0,
+            $this->market ?? 0
+        );
     }}

@@ -10,9 +10,8 @@ use JiguangSmsBundle\Repository\SignRepository;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 
 #[ORM\Entity(repositoryClass: SignRepository::class)]
-#[ORM\Table(name: 'jg_sms_sign')]
-#[ORM\HasLifecycleCallbacks]
-class Sign
+#[ORM\Table(name: 'jg_sms_sign', options: ['comment' => '极光短信签名'])]
+class Sign implements \Stringable
 {
     use TimestampableAware;
     #[ORM\Id]
@@ -21,7 +20,7 @@ class Sign
     private ?int $id = 0;
 
     #[ORM\ManyToOne(targetEntity: Account::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, options: ['comment' => '所属账号'])]
     private Account $account;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['comment' => '极光签名ID'])]
@@ -177,4 +176,10 @@ class Sign
     {
         $this->account = $account;
         return $this;
-    }}
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('[%s] %s (%s)', $this->sign, $this->type->value, $this->status->value);
+    }
+}

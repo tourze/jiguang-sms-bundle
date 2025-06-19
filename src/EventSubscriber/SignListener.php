@@ -46,7 +46,7 @@ class SignListener
 
         try {
             // 更新签名时,同步到极光
-            if ($sign->getSignId()) {
+            if ($sign->getSignId() !== null) {
                 $this->signService->updateRemoteSign($sign);
             }
         } catch (\Throwable $e) {
@@ -65,7 +65,7 @@ class SignListener
 
         try {
             // 删除签名时,同步到极光
-            if ($sign->getSignId()) {
+            if ($sign->getSignId() !== null) {
                 $this->signService->deleteRemoteSign($sign);
             }
         } catch (\Throwable $e) {

@@ -78,7 +78,7 @@ class SignService
         };
         $sign->setStatus($status);
 
-        $sign->setIsDefault(!!$data['is_default']);
-        $sign->setUseStatus(!!$data['use_status']);
+        $sign->setIsDefault((bool)($data['is_default'] ?? false));
+        $sign->setUseStatus((bool)($data['use_status'] ?? false));
     }
 }

@@ -2,14 +2,35 @@
 
 namespace JiguangSmsBundle\Enum;
 
-enum SignTypeEnum: int
+use Tourze\EnumExtra\Itemable;
+use Tourze\EnumExtra\ItemTrait;
+use Tourze\EnumExtra\Labelable;
+use Tourze\EnumExtra\Selectable;
+use Tourze\EnumExtra\SelectTrait;
+
+enum SignTypeEnum: int implements Itemable, Labelable, Selectable
 {
+    use ItemTrait;
+    use SelectTrait;
+
     case COMPANY = 1;           // 公司名称全称或简称
     case ICP_WEBSITE = 2;       // 工信部备案的网站全称或简称
     case APP = 3;               // APP应用名称或简称
     case WECHAT = 4;           // 公众号小程序全称或简称
     case TRADEMARK = 5;         // 商标名称全称或简称
     case OTHER = 6;             // 其他
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::COMPANY => '公司名称全称或简称',
+            self::ICP_WEBSITE => '工信部备案的网站全称或简称',
+            self::APP => 'APP应用名称或简称',
+            self::WECHAT => '公众号小程序全称或简称',
+            self::TRADEMARK => '商标名称全称或简称',
+            self::OTHER => '其他',
+        };
+    }
 
     public function getDescription(): string
     {

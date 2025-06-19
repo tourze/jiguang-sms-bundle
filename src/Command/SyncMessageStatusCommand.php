@@ -18,11 +18,12 @@ use Tourze\Symfony\CronJob\Attribute\AsCronTask;
 
 #[AsCronTask('*/5 * * * *')]
 #[AsCommand(
-    name: 'jiguang:sms:sync-message-status',
+    name: self::NAME,
     description: '同步极光短信发送状态',
 )]
 class SyncMessageStatusCommand extends Command
 {
+    public const NAME = 'jiguang:sms:sync-message-status';
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly AccountRepository $accountRepository,

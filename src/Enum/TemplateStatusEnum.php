@@ -2,9 +2,27 @@
 
 namespace JiguangSmsBundle\Enum;
 
-enum TemplateStatusEnum: int
+use Tourze\EnumExtra\Itemable;
+use Tourze\EnumExtra\ItemTrait;
+use Tourze\EnumExtra\Labelable;
+use Tourze\EnumExtra\Selectable;
+use Tourze\EnumExtra\SelectTrait;
+
+enum TemplateStatusEnum: int implements Itemable, Labelable, Selectable
 {
+    use ItemTrait;
+    use SelectTrait;
+
     case PENDING = 0;    // 审核中
     case APPROVED = 1;   // 审核通过
     case REJECTED = 2;   // 审核不通过
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::PENDING => '审核中',
+            self::APPROVED => '审核通过',
+            self::REJECTED => '审核不通过',
+        };
+    }
 }

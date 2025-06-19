@@ -43,11 +43,11 @@ class TemplateTest extends TestCase
         $this->assertTrue($template->isUseStatus());
 
         // 测试创建时间和更新时间
-        $now = new \DateTime();
+        $now = new \DateTimeImmutable();
         $template->setCreateTime($now);
         $this->assertSame($now, $template->getCreateTime());
 
-        $updateTime = new \DateTime('+1 hour');
+        $updateTime = new \DateTimeImmutable('+1 hour');
         $template->setUpdateTime($updateTime);
         $this->assertSame($updateTime, $template->getUpdateTime());
     }

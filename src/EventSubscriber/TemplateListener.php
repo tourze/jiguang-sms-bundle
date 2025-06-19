@@ -46,7 +46,7 @@ class TemplateListener
 
         try {
             // 更新模板时,同步到极光
-            if ($template->getTempId()) {
+            if ($template->getTempId() !== null) {
                 $this->templateService->updateRemoteTemplate($template);
             }
         } catch (\Throwable $e) {
@@ -65,7 +65,7 @@ class TemplateListener
 
         try {
             // 删除模板时,同步到极光
-            if ($template->getTempId()) {
+            if ($template->getTempId() !== null) {
                 $this->templateService->deleteRemoteTemplate($template);
             }
         } catch (\Throwable $e) {

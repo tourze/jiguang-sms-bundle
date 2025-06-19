@@ -8,8 +8,8 @@ use JiguangSmsBundle\Repository\MessageRepository;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
-#[ORM\Table(name: 'jg_sms_message')]
-class Message
+#[ORM\Table(name: 'jg_sms_message', options: ['comment' => '极光短信消息记录'])]
+class Message implements \Stringable
 {
     use TimestampableAware;
     #[ORM\Id]
@@ -18,7 +18,7 @@ class Message
     private ?int $id = 0;
 
     #[ORM\ManyToOne(targetEntity: Account::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, options: ['comment' => '所属账号'])]
     private Account $account;
 
     #[ORM\Column(type: Types::STRING, length: 20, options: ['comment' => '手机号'])]
@@ -28,11 +28,11 @@ class Message
     private ?string $msgId = null;
 
     #[ORM\ManyToOne(targetEntity: Template::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, options: ['comment' => '短信模板'])]
     private Template $template;
 
     #[ORM\ManyToOne(targetEntity: Sign::class)]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: true, options: ['comment' => '短信签名'])]
     private ?Sign $sign = null;
 
     #[ORM\Column(type: Types::JSON, nullable: true, options: ['comment' => '模板参数'])]
@@ -168,4 +168,10 @@ class Message
     {
         $this->response = $response;
         return $this;
-    }}
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('[%s] %s - %s', $this->mobile, $this->template->getId(), $this->msgId ?? 'N/A');
+    }
+}

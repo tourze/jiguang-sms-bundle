@@ -33,14 +33,14 @@ class UpdateSignRequest extends AbstractSignRequest
             ],
         ];
 
-        if ($this->sign->getRemark()) {
+        if ($this->sign->getRemark() !== null) {
             $options['multipart'][] = [
                 'name' => 'remark',
                 'contents' => $this->sign->getRemark(),
             ];
         }
 
-        if ($this->sign->getImage0()) {
+        if ($this->sign->getImage0() !== null) {
             $options['multipart'][] = [
                 'name' => 'image0',
                 'contents' => fopen($this->sign->getImage0(), 'r'),
@@ -48,7 +48,7 @@ class UpdateSignRequest extends AbstractSignRequest
             ];
         }
 
-        if ($this->sign->getImage1()) {
+        if ($this->sign->getImage1() !== null) {
             $options['multipart'][] = [
                 'name' => 'image1',
                 'contents' => fopen($this->sign->getImage1(), 'r'),

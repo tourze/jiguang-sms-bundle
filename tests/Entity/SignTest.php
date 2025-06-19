@@ -50,11 +50,11 @@ class SignTest extends TestCase
         $this->assertEquals('image1.jpg', $sign->getImage1());
 
         // 测试创建时间和更新时间
-        $now = new \DateTime();
+        $now = new \DateTimeImmutable();
         $sign->setCreateTime($now);
         $this->assertSame($now, $sign->getCreateTime());
 
-        $updateTime = new \DateTime('+1 hour');
+        $updateTime = new \DateTimeImmutable('+1 hour');
         $sign->setUpdateTime($updateTime);
         $this->assertSame($updateTime, $sign->getUpdateTime());
     }

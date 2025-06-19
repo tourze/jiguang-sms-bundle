@@ -16,11 +16,12 @@ use Tourze\Symfony\CronJob\Attribute\AsCronTask;
 
 #[AsCronTask('* * * * *')]
 #[AsCommand(
-    name: 'jiguang:sms:sync-code-verify-status',
+    name: self::NAME,
     description: '同步验证码验证状态',
 )]
 class SyncCodeVerifyStatusCommand extends Command
 {
+    public const NAME = 'jiguang:sms:sync-code-verify-status';
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly JiguangSmsService $jiguangSmsService,

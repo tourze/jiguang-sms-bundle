@@ -22,12 +22,12 @@ class WithAccountRequestTest extends TestCase
                 return '/test/path';
             }
 
-            public function getRequestMethod(): ?string
+            public function getRequestMethod(): string
             {
                 return 'POST';
             }
 
-            public function getRequestOptions(): ?array
+            public function getRequestOptions(): array
             {
                 return ['query' => ['param' => 'value']];
             }

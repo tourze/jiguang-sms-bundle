@@ -12,11 +12,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'jiguang:sms:sync-template-status',
+    name: self::NAME,
     description: '同步极光短信模板状态',
 )]
 class SyncTemplateStatusCommand extends Command
 {
+    public const NAME = 'jiguang:sms:sync-template-status';
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly TemplateService $templateService,

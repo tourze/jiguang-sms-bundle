@@ -17,11 +17,12 @@ use Tourze\Symfony\CronJob\Attribute\AsCronTask;
 
 #[AsCronTask('*/10 * * * *')]
 #[AsCommand(
-    name: 'jiguang:sms:sync-account-balance',
+    name: self::NAME,
     description: '同步极光短信账户余量',
 )]
 class SyncAccountBalanceCommand extends Command
 {
+    public const NAME = 'jiguang:sms:sync-account-balance';
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly AccountRepository $accountRepository,

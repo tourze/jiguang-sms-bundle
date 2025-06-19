@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 
 #[ORM\MappedSuperclass]
-abstract class AbstractCode
+abstract class AbstractCode implements \Stringable
 {
     use TimestampableAware;
     #[ORM\Id]
@@ -16,7 +16,7 @@ abstract class AbstractCode
     private ?int $id = 0;
 
     #[ORM\ManyToOne(targetEntity: Account::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, options: ['comment' => '所属账号'])]
     protected Account $account;
 
     #[ORM\Column(type: Types::STRING, length: 20, options: ['comment' => '手机号'])]
@@ -153,4 +153,10 @@ abstract class AbstractCode
     public function isDelivered(): bool
     {
         return $this->status === 4001;
-    }}
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('[%s] %s - %s', $this->mobile, $this->code, $this->msgId ?? 'N/A');
+    }
+}

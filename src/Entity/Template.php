@@ -10,8 +10,8 @@ use JiguangSmsBundle\Repository\TemplateRepository;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 
 #[ORM\Entity(repositoryClass: TemplateRepository::class)]
-#[ORM\Table(name: 'jg_sms_template')]
-class Template
+#[ORM\Table(name: 'jg_sms_template', options: ['comment' => '极光短信模板'])]
+class Template implements \Stringable
 {
     use TimestampableAware;
     #[ORM\Id]
@@ -20,7 +20,7 @@ class Template
     private ?int $id = 0;
 
     #[ORM\ManyToOne(targetEntity: Account::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, options: ['comment' => '所属账号'])]
     private Account $account;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['comment' => '极光模板ID'])]
@@ -148,4 +148,11 @@ class Template
     {
         $this->account = $account;
         return $this;
-    }}
+    }
+
+    public function __toString(): string
+    {
+        $preview = mb_strlen($this->template) > 50 ? mb_substr($this->template, 0, 50) . '...' : $this->template;
+        return sprintf('[%s] %s (%s)', $this->tempId ?? 'N/A', $preview, $this->status->value);
+    }
+}

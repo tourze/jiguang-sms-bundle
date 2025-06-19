@@ -12,11 +12,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'jiguang:sms:sync-sign-status',
+    name: self::NAME,
     description: '同步极光短信签名状态',
 )]
 class SyncSignStatusCommand extends Command
 {
+    public const NAME = 'jiguang:sms:sync-sign-status';
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly SignService $signService,
