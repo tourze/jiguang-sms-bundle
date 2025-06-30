@@ -4,6 +4,7 @@ namespace JiguangSmsBundle\Service;
 
 use JiguangSmsBundle\Entity\Sign;
 use JiguangSmsBundle\Enum\SignStatusEnum;
+use JiguangSmsBundle\Exception\InvalidSignStatusException;
 use JiguangSmsBundle\Request\Sign\CreateSignRequest;
 use JiguangSmsBundle\Request\Sign\DeleteSignRequest;
 use JiguangSmsBundle\Request\Sign\GetSignRequest;
@@ -74,7 +75,7 @@ class SignService
             1 => SignStatusEnum::APPROVED,
             2 => SignStatusEnum::REJECTED,
             3 => SignStatusEnum::DELETED,
-            default => throw new \RuntimeException('Unknown sign status'),
+            default => throw new InvalidSignStatusException((string)$data['status']),
         };
         $sign->setStatus($status);
 

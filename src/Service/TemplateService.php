@@ -4,6 +4,7 @@ namespace JiguangSmsBundle\Service;
 
 use JiguangSmsBundle\Entity\Template;
 use JiguangSmsBundle\Enum\TemplateStatusEnum;
+use JiguangSmsBundle\Exception\InvalidTemplateStatusException;
 use JiguangSmsBundle\Request\Template\CreateTemplateRequest;
 use JiguangSmsBundle\Request\Template\DeleteTemplateRequest;
 use JiguangSmsBundle\Request\Template\GetTemplateRequest;
@@ -73,7 +74,7 @@ class TemplateService
             0 => TemplateStatusEnum::PENDING,
             1 => TemplateStatusEnum::APPROVED,
             2 => TemplateStatusEnum::REJECTED,
-            default => throw new \RuntimeException('Unknown template status'),
+            default => throw new InvalidTemplateStatusException((string)$data['status']),
         };
         $template->setStatus($status);
     }

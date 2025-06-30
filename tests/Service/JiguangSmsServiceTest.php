@@ -16,10 +16,56 @@ class JiguangSmsServiceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->service = $this->getMockBuilder(JiguangSmsService::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['sendRequest'])
-            ->getMock();
+        $this->service = new JiguangSmsService();
+    }
+
+    public function test_getRequestMethod_withRequestMethod_returnsMethod(): void
+    {
+        $request = $this->createMock(RequestInterface::class);
+        $request->expects($this->once())
+            ->method('getRequestMethod')
+            ->willReturn('GET');
+
+        $result = $this->invokeMethod($this->service, 'getRequestMethod', [$request]);
+
+        $this->assertEquals('GET', $result);
+    }
+
+    public function test_getRequestMethod_withNullMethod_returnsDefaultPost(): void
+    {
+        $request = $this->createMock(RequestInterface::class);
+        $request->expects($this->once())
+            ->method('getRequestMethod')
+            ->willReturn(null);
+
+        $result = $this->invokeMethod($this->service, 'getRequestMethod', [$request]);
+
+        $this->assertEquals('POST', $result);
+    }
+
+    public function test_getRequestUrl_returnsRequestPath(): void
+    {
+        $request = $this->createMock(RequestInterface::class);
+        $request->expects($this->once())
+            ->method('getRequestPath')
+            ->willReturn('/test/path');
+
+        $result = $this->invokeMethod($this->service, 'getRequestUrl', [$request]);
+
+        $this->assertEquals('/test/path', $result);
+    }
+
+    public function test_getRequestOptions_withoutAccountRequest_returnsOptionsWithHeaders(): void
+    {
+        $request = $this->createMock(RequestInterface::class);
+        $request->expects($this->once())
+            ->method('getRequestOptions')
+            ->willReturn([]);
+
+        $result = $this->invokeMethod($this->service, 'getRequestOptions', [$request]);
+
+        $this->assertArrayHasKey('headers', $result);
+        $this->assertIsArray($result['headers']);
     }
 
     public function testGetRequestUrl(): void
@@ -114,32 +160,13 @@ class JiguangSmsServiceTest extends TestCase
         $this->assertEquals($responseData, $result);
     }
 
-    // 由于ApiClient的初始化问题，暂时跳过此测试
-    public function testRequest(): void
-    {
-        $this->markTestSkipped('Skipping test due to ApiClient initialization issues');
 
-        /*
-        $responseData = ['sign_id' => 'sign_123'];
-        $responseJson = Json::encode($responseData);
-        
-        $response = $this->createMock(ResponseInterface::class);
-        $response->method('getContent')
-            ->willReturn($responseJson);
-            
-        $this->service->method('sendRequest')
-            ->willReturn($response);
-            
-        $request = $this->createMock(RequestInterface::class);
-        $request->method('getRequestPath')
-            ->willReturn('/test/path');
-        $request->method('getRequestMethod')
-            ->willReturn('POST');
-        $request->method('getRequestOptions')
-            ->willReturn([]);
-            
-        $result = $this->service->request($request);
-        $this->assertEquals($responseData, $result);
-        */
+    private function invokeMethod(object $object, string $methodName, array $parameters = []): mixed
+    {
+        $reflection = new \ReflectionClass(get_class($object));
+        $method = $reflection->getMethod($methodName);
+        $method->setAccessible(true);
+
+        return $method->invokeArgs($object, $parameters);
     }
 }

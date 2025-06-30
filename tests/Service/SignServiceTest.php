@@ -11,6 +11,7 @@ use JiguangSmsBundle\Request\Sign\UpdateSignRequest;
 use JiguangSmsBundle\Service\JiguangSmsService;
 use JiguangSmsBundle\Service\SignService;
 use PHPUnit\Framework\TestCase;
+use JiguangSmsBundle\Exception\InvalidSignStatusException;
 
 class SignServiceTest extends TestCase
 {
@@ -21,6 +22,89 @@ class SignServiceTest extends TestCase
     {
         $this->jiguangSmsService = $this->createMock(JiguangSmsService::class);
         $this->signService = new SignService($this->jiguangSmsService);
+    }
+
+    public function test_constructor_setsJiguangSmsService(): void
+    {
+        $this->assertInstanceOf(SignService::class, $this->signService);
+    }
+
+    public function test_createRemoteSign_callsJiguangSmsService(): void
+    {
+        $sign = $this->createMock(Sign::class);
+        $sign->expects($this->once())
+            ->method('getAccount')
+            ->willReturn($this->createMock(\JiguangSmsBundle\Entity\Account::class));
+        
+        $sign->expects($this->once())
+            ->method('setSignId')
+            ->with(123);
+
+        $this->jiguangSmsService->expects($this->once())
+            ->method('request')
+            ->willReturn(['sign_id' => 123]);
+
+        $this->signService->createRemoteSign($sign);
+    }
+
+    public function test_updateRemoteSign_callsJiguangSmsService(): void
+    {
+        $sign = $this->createMock(Sign::class);
+        $sign->expects($this->once())
+            ->method('getAccount')
+            ->willReturn($this->createMock(\JiguangSmsBundle\Entity\Account::class));
+
+        $this->jiguangSmsService->expects($this->once())
+            ->method('request');
+
+        $this->signService->updateRemoteSign($sign);
+    }
+
+    public function test_deleteRemoteSign_callsJiguangSmsService(): void
+    {
+        $sign = $this->createMock(Sign::class);
+        $sign->expects($this->once())
+            ->method('getAccount')
+            ->willReturn($this->createMock(\JiguangSmsBundle\Entity\Account::class));
+
+        $this->jiguangSmsService->expects($this->once())
+            ->method('request');
+
+        $this->signService->deleteRemoteSign($sign);
+    }
+
+    public function test_syncSignStatus_withValidStatus_setsStatus(): void
+    {
+        $sign = $this->createMock(Sign::class);
+        $sign->expects($this->once())
+            ->method('getAccount')
+            ->willReturn($this->createMock(\JiguangSmsBundle\Entity\Account::class));
+
+        $sign->expects($this->once())
+            ->method('setStatus')
+            ->with(SignStatusEnum::APPROVED);
+
+        $this->jiguangSmsService->expects($this->once())
+            ->method('request')
+            ->willReturn(['status' => 1]);
+
+        $this->signService->syncSignStatus($sign);
+    }
+
+    public function test_syncSignStatus_withInvalidStatus_throwsException(): void
+    {
+        $sign = $this->createMock(Sign::class);
+        $sign->expects($this->once())
+            ->method('getAccount')
+            ->willReturn($this->createMock(\JiguangSmsBundle\Entity\Account::class));
+
+        $this->jiguangSmsService->expects($this->once())
+            ->method('request')
+            ->willReturn(['status' => 999]);
+
+        $this->expectException(InvalidSignStatusException::class);
+
+        $this->signService->syncSignStatus($sign);
     }
 
     public function testCreateRemoteSign_success(): void
@@ -208,8 +292,8 @@ class SignServiceTest extends TestCase
             ]);
 
         // 期望抛出异常
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Unknown sign status');
+        $this->expectException(InvalidSignStatusException::class);
+        $this->expectExceptionMessage('无效的签名状态: 99');
 
         // 执行测试
         $this->signService->syncSignStatus($sign);

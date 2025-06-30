@@ -11,6 +11,7 @@ use JiguangSmsBundle\Request\Template\UpdateTemplateRequest;
 use JiguangSmsBundle\Service\JiguangSmsService;
 use JiguangSmsBundle\Service\TemplateService;
 use PHPUnit\Framework\TestCase;
+use JiguangSmsBundle\Exception\InvalidTemplateStatusException;
 
 class TemplateServiceTest extends TestCase
 {
@@ -21,6 +22,89 @@ class TemplateServiceTest extends TestCase
     {
         $this->jiguangSmsService = $this->createMock(JiguangSmsService::class);
         $this->templateService = new TemplateService($this->jiguangSmsService);
+    }
+
+    public function test_constructor_setsJiguangSmsService(): void
+    {
+        $this->assertInstanceOf(TemplateService::class, $this->templateService);
+    }
+
+    public function test_createRemoteTemplate_callsJiguangSmsService(): void
+    {
+        $template = $this->createMock(Template::class);
+        $template->expects($this->once())
+            ->method('getAccount')
+            ->willReturn($this->createMock(\JiguangSmsBundle\Entity\Account::class));
+        
+        $template->expects($this->once())
+            ->method('setTempId')
+            ->with(123);
+
+        $this->jiguangSmsService->expects($this->once())
+            ->method('request')
+            ->willReturn(['temp_id' => 123]);
+
+        $this->templateService->createRemoteTemplate($template);
+    }
+
+    public function test_updateRemoteTemplate_callsJiguangSmsService(): void
+    {
+        $template = $this->createMock(Template::class);
+        $template->expects($this->once())
+            ->method('getAccount')
+            ->willReturn($this->createMock(\JiguangSmsBundle\Entity\Account::class));
+
+        $this->jiguangSmsService->expects($this->once())
+            ->method('request');
+
+        $this->templateService->updateRemoteTemplate($template);
+    }
+
+    public function test_deleteRemoteTemplate_callsJiguangSmsService(): void
+    {
+        $template = $this->createMock(Template::class);
+        $template->expects($this->once())
+            ->method('getAccount')
+            ->willReturn($this->createMock(\JiguangSmsBundle\Entity\Account::class));
+
+        $this->jiguangSmsService->expects($this->once())
+            ->method('request');
+
+        $this->templateService->deleteRemoteTemplate($template);
+    }
+
+    public function test_syncTemplateStatus_withValidStatus_setsStatus(): void
+    {
+        $template = $this->createMock(Template::class);
+        $template->expects($this->once())
+            ->method('getAccount')
+            ->willReturn($this->createMock(\JiguangSmsBundle\Entity\Account::class));
+
+        $template->expects($this->once())
+            ->method('setStatus')
+            ->with(TemplateStatusEnum::APPROVED);
+
+        $this->jiguangSmsService->expects($this->once())
+            ->method('request')
+            ->willReturn(['status' => 1]);
+
+        $this->templateService->syncTemplateStatus($template);
+    }
+
+    public function test_syncTemplateStatus_withInvalidStatus_throwsException(): void
+    {
+        $template = $this->createMock(Template::class);
+        $template->expects($this->once())
+            ->method('getAccount')
+            ->willReturn($this->createMock(\JiguangSmsBundle\Entity\Account::class));
+
+        $this->jiguangSmsService->expects($this->once())
+            ->method('request')
+            ->willReturn(['status' => 999]);
+
+        $this->expectException(InvalidTemplateStatusException::class);
+
+        $this->templateService->syncTemplateStatus($template);
     }
 
     public function testCreateRemoteTemplate_success(): void
@@ -170,8 +254,8 @@ class TemplateServiceTest extends TestCase
             ]);
 
         // 期望抛出异常
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Unknown template status');
+        $this->expectException(InvalidTemplateStatusException::class);
+        $this->expectExceptionMessage('无效的模板状态: 99');
 
         // 执行测试
         $this->templateService->syncTemplateStatus($template);
