@@ -19,6 +19,9 @@ class GetStatusRequest extends WithAccountRequest
         return 'GET';
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getRequestOptions(): ?array
     {
         return null;

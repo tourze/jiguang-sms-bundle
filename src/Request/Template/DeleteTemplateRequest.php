@@ -18,6 +18,9 @@ class DeleteTemplateRequest extends AbstractTemplateRequest
         return 'DELETE';
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getRequestOptions(): ?array
     {
         return null;
@@ -28,9 +31,8 @@ class DeleteTemplateRequest extends AbstractTemplateRequest
         return $this->template;
     }
 
-    public function setTemplate(Template $template): self
+    public function setTemplate(Template $template): void
     {
         $this->template = $template;
-        return $this;
     }
 }

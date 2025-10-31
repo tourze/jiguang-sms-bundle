@@ -18,6 +18,9 @@ class GetSignRequest extends AbstractSignRequest
         return 'GET';
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getRequestOptions(): ?array
     {
         return null;
@@ -28,9 +31,8 @@ class GetSignRequest extends AbstractSignRequest
         return $this->sign;
     }
 
-    public function setSign(Sign $sign): self
+    public function setSign(Sign $sign): void
     {
         $this->sign = $sign;
-        return $this;
     }
-} 
+}

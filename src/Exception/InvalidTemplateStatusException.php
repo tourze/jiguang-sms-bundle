@@ -11,4 +11,4 @@ class InvalidTemplateStatusException extends JiguangSmsException
     {
         parent::__construct('无效的模板状态: ' . $status);
     }
-} 
+}

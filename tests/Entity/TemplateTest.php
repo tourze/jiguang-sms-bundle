@@ -6,10 +6,38 @@ use JiguangSmsBundle\Entity\Account;
 use JiguangSmsBundle\Entity\Template;
 use JiguangSmsBundle\Enum\TemplateStatusEnum;
 use JiguangSmsBundle\Enum\TemplateTypeEnum;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 
-class TemplateTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(Template::class)]
+final class TemplateTest extends AbstractEntityTestCase
 {
+    protected function setUp(): void
+    {
+        // 空实现，因为此测试不需要特殊的设置
+    }
+
+    protected function createEntity(): object
+    {
+        return new Template();
+    }
+
+    /** @return iterable<array{string, mixed}> */
+    public static function propertiesProvider(): iterable
+    {
+        yield 'tempId' => ['tempId', 123];
+        yield 'template' => ['template', '测试模板内容'];
+        yield 'type' => ['type', TemplateTypeEnum::VERIFICATION];
+        yield 'ttl' => ['ttl', 300];
+        yield 'remark' => ['remark', '测试备注'];
+        yield 'status' => ['status', TemplateStatusEnum::APPROVED];
+        yield 'useStatus' => ['useStatus', true];
+        yield 'syncing' => ['syncing', true];
+    }
+
     public function testGetterAndSetterMethods(): void
     {
         $template = new Template();

@@ -22,6 +22,7 @@ use Tourze\Symfony\CronJob\Attribute\AsCronTask;
 class SyncCodeVerifyStatusCommand extends Command
 {
     public const NAME = 'jiguang:sms:sync-code-verify-status';
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly JiguangSmsService $jiguangSmsService,
@@ -45,7 +46,7 @@ class SyncCodeVerifyStatusCommand extends Command
         foreach ($unverifiedCodes as $code) {
             try {
                 $this->syncCodeStatus($code);
-                $count++;
+                ++$count;
             } catch (\Throwable $e) {
                 $output->writeln(sprintf(
                     '<error>同步验证码[%s]状态失败: %s</error>',
@@ -63,17 +64,22 @@ class SyncCodeVerifyStatusCommand extends Command
 
     private function syncCodeStatus(AbstractCode $code): void
     {
+        $msgId = $code->getMsgId();
+        if (null === $msgId) {
+            return;
+        }
+
         $request = new VerifyCodeRequest();
         $request->setAccount($code->getAccount());
-        $request->setMsgId($code->getMsgId())
-            ->setCode($code->getCode());
+        $request->setMsgId($msgId);
+        $request->setCode($code->getCode());
 
         try {
             $this->jiguangSmsService->request($request);
             $code->setVerified(true);
         } catch (\Throwable $e) {
             // 如果验证失败,说明验证码无效
-            if ($e->getCode() === 50020) {
+            if (50020 === $e->getCode()) {
                 $code->setVerified(false);
             } else {
                 throw $e;

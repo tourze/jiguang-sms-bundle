@@ -10,6 +10,7 @@ use JiguangSmsBundle\Request\WithAccountRequest;
 class VerifyCodeRequest extends WithAccountRequest
 {
     protected string $msgId;
+
     protected string $code;
 
     public function getMsgId(): string
@@ -17,10 +18,9 @@ class VerifyCodeRequest extends WithAccountRequest
         return $this->msgId;
     }
 
-    public function setMsgId(string $msgId): self
+    public function setMsgId(string $msgId): void
     {
         $this->msgId = $msgId;
-        return $this;
     }
 
     public function getCode(): string
@@ -28,10 +28,9 @@ class VerifyCodeRequest extends WithAccountRequest
         return $this->code;
     }
 
-    public function setCode(string $code): self
+    public function setCode(string $code): void
     {
         $this->code = $code;
-        return $this;
     }
 
     public function getRequestPath(): string
@@ -39,6 +38,9 @@ class VerifyCodeRequest extends WithAccountRequest
         return sprintf('https://api.sms.jpush.cn/v1/codes/%s/valid', $this->msgId);
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getRequestOptions(): ?array
     {
         return [

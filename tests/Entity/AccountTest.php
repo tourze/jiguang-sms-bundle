@@ -3,10 +3,38 @@
 namespace JiguangSmsBundle\Tests\Entity;
 
 use JiguangSmsBundle\Entity\Account;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 
-class AccountTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(Account::class)]
+final class AccountTest extends AbstractEntityTestCase
 {
+    protected function setUp(): void
+    {
+        // 空实现，因为此测试不需要特殊的设置
+    }
+
+    protected function createEntity(): object
+    {
+        return new Account();
+    }
+
+    /** @return iterable<array{string, mixed}> */
+    public static function propertiesProvider(): iterable
+    {
+        yield 'title' => ['title', '测试账号'];
+        yield 'appKey' => ['appKey', 'test_app_key'];
+        yield 'masterSecret' => ['masterSecret', 'test_master_secret'];
+        yield 'valid' => ['valid', true];
+        yield 'createdBy' => ['createdBy', 'creator'];
+        yield 'updatedBy' => ['updatedBy', 'updater'];
+        yield 'createTime' => ['createTime', new \DateTimeImmutable()];
+        yield 'updateTime' => ['updateTime', new \DateTimeImmutable()];
+    }
+
     public function testGetterAndSetterMethods(): void
     {
         $account = new Account();

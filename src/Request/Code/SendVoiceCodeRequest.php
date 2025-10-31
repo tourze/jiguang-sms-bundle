@@ -10,7 +10,9 @@ use JiguangSmsBundle\Request\WithAccountRequest;
 class SendVoiceCodeRequest extends WithAccountRequest
 {
     protected string $mobile;
+
     protected ?string $code = null;
+
     protected ?int $ttl = null;
 
     public function getMobile(): string
@@ -18,10 +20,9 @@ class SendVoiceCodeRequest extends WithAccountRequest
         return $this->mobile;
     }
 
-    public function setMobile(string $mobile): self
+    public function setMobile(string $mobile): void
     {
         $this->mobile = $mobile;
-        return $this;
     }
 
     public function getCode(): ?string
@@ -29,10 +30,9 @@ class SendVoiceCodeRequest extends WithAccountRequest
         return $this->code;
     }
 
-    public function setCode(?string $code): self
+    public function setCode(?string $code): void
     {
         $this->code = $code;
-        return $this;
     }
 
     public function getTtl(): ?int
@@ -40,10 +40,9 @@ class SendVoiceCodeRequest extends WithAccountRequest
         return $this->ttl;
     }
 
-    public function setTtl(?int $ttl): self
+    public function setTtl(?int $ttl): void
     {
         $this->ttl = $ttl;
-        return $this;
     }
 
     public function getRequestPath(): string
@@ -51,17 +50,20 @@ class SendVoiceCodeRequest extends WithAccountRequest
         return 'https://api.sms.jpush.cn/v1/voice_codes';
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getRequestOptions(): ?array
     {
         $params = [
             'mobile' => $this->mobile,
         ];
 
-        if ($this->code !== null) {
+        if (null !== $this->code) {
             $params['code'] = $this->code;
         }
 
-        if ($this->ttl !== null) {
+        if (null !== $this->ttl) {
             $params['ttl'] = $this->ttl;
         }
 

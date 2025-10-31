@@ -24,6 +24,7 @@ use Tourze\Symfony\CronJob\Attribute\AsCronTask;
 class SyncMessageStatusCommand extends Command
 {
     public const NAME = 'jiguang:sms:sync-message-status';
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly AccountRepository $accountRepository,
@@ -52,37 +53,61 @@ class SyncMessageStatusCommand extends Command
         $request->setAccount($account);
 
         $response = $this->jiguangSmsService->request($request);
-        if (!isset($response[0])) {
+        if (!is_array($response) || !isset($response[0])) {
             return;
         }
 
         foreach ($response as $item) {
-            $msgId = $item['msgId'];
-            $status = $item['status'];
-            $receiveTime = new \DateTimeImmutable('@' . ($item['receiveTime'] / 1000));
+            $this->processStatusItem($item);
+        }
+    }
 
-            // 同步普通短信状态
-            $message = $this->messageRepository->findOneBy(['msgId' => $msgId]);
-            if ($message !== null) {
-                $message->setStatus($status)
-                    ->setReceiveTime($receiveTime);
-                continue;
-            }
+    private function processStatusItem(mixed $item): void
+    {
+        if (!is_array($item)) {
+            return;
+        }
 
-            // 同步文本验证码状态
-            $textCode = $this->textCodeRepository->findOneBy(['msgId' => $msgId]);
-            if ($textCode !== null) {
-                $textCode->setStatus($status)
-                    ->setReceiveTime($receiveTime);
-                continue;
-            }
+        $msgId = $item['msgId'] ?? null;
+        $status = $item['status'] ?? null;
+        $receiveTime = isset($item['receiveTime']) && is_numeric($item['receiveTime'])
+            ? new \DateTimeImmutable('@' . (intval($item['receiveTime']) / 1000))
+            : null;
 
-            // 同步语音验证码状态
-            $voiceCode = $this->voiceCodeRepository->findOneBy(['msgId' => $msgId]);
-            if ($voiceCode !== null) {
-                $voiceCode->setStatus($status)
-                    ->setReceiveTime($receiveTime);
-            }
+        if (null === $msgId || null === $status || null === $receiveTime) {
+            return;
+        }
+
+        $this->updateEntityStatus($msgId, $status, $receiveTime);
+    }
+
+    private function updateEntityStatus(mixed $msgId, mixed $status, \DateTimeImmutable $receiveTime): void
+    {
+        $intStatus = is_int($status) ? $status : null;
+
+        // 同步普通短信状态
+        $message = $this->messageRepository->findOneBy(['msgId' => $msgId]);
+        if (null !== $message) {
+            $message->setStatus($intStatus);
+            $message->setReceiveTime($receiveTime);
+
+            return;
+        }
+
+        // 同步文本验证码状态
+        $textCode = $this->textCodeRepository->findOneBy(['msgId' => $msgId]);
+        if (null !== $textCode) {
+            $textCode->setStatus($intStatus);
+            $textCode->setReceiveTime($receiveTime);
+
+            return;
+        }
+
+        // 同步语音验证码状态
+        $voiceCode = $this->voiceCodeRepository->findOneBy(['msgId' => $msgId]);
+        if (null !== $voiceCode) {
+            $voiceCode->setStatus($intStatus);
+            $voiceCode->setReceiveTime($receiveTime);
         }
     }
 }

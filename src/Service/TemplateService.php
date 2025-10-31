@@ -11,15 +11,16 @@ use JiguangSmsBundle\Request\Template\GetTemplateRequest;
 use JiguangSmsBundle\Request\Template\UpdateTemplateRequest;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class TemplateService
+readonly class TemplateService
 {
     public function __construct(
-        private readonly JiguangSmsService $jiguangSmsService,
+        private JiguangSmsService $jiguangSmsService,
     ) {
     }
 
     /**
      * 创建远程模板
+     *
      * @throws TransportExceptionInterface
      */
     public function createRemoteTemplate(Template $template): void
@@ -29,11 +30,13 @@ class TemplateService
         $request->setTemplate($template);
 
         $data = $this->jiguangSmsService->request($request);
-        $template->setTempId($data['temp_id']);
+        $tempId = is_array($data) && isset($data['temp_id']) && is_int($data['temp_id']) ? $data['temp_id'] : null;
+        $template->setTempId($tempId);
     }
 
     /**
      * 更新远程模板
+     *
      * @throws TransportExceptionInterface
      */
     public function updateRemoteTemplate(Template $template): void
@@ -47,6 +50,7 @@ class TemplateService
 
     /**
      * 删除远程模板
+     *
      * @throws TransportExceptionInterface
      */
     public function deleteRemoteTemplate(Template $template): void
@@ -60,6 +64,7 @@ class TemplateService
 
     /**
      * 同步模板状态
+     *
      * @throws TransportExceptionInterface
      */
     public function syncTemplateStatus(Template $template): void
@@ -70,11 +75,16 @@ class TemplateService
 
         $data = $this->jiguangSmsService->request($request);
 
-        $status = match ($data['status']) {
+        $statusValue = is_array($data) && isset($data['status']) ? $data['status'] : null;
+        if (null === $statusValue) {
+            throw new InvalidTemplateStatusException('Status not found in response');
+        }
+
+        $status = match ($statusValue) {
             0 => TemplateStatusEnum::PENDING,
             1 => TemplateStatusEnum::APPROVED,
             2 => TemplateStatusEnum::REJECTED,
-            default => throw new InvalidTemplateStatusException((string)$data['status']),
+            default => throw new InvalidTemplateStatusException(is_scalar($statusValue) ? (string) $statusValue : 'Invalid status type'),
         };
         $template->setStatus($status);
     }

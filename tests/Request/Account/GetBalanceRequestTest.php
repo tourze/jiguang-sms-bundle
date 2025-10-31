@@ -2,29 +2,42 @@
 
 namespace JiguangSmsBundle\Tests\Request\Account;
 
+use HttpClientBundle\Tests\Request\RequestTestCase;
 use JiguangSmsBundle\Request\Account\GetBalanceRequest;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
-class GetBalanceRequestTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(GetBalanceRequest::class)]
+final class GetBalanceRequestTest extends RequestTestCase
 {
-    public function test_constructor_createsInstance(): void
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // 空实现，因为此测试不需要特殊的设置
+    }
+
+    public function testConstructorCreatesInstance(): void
     {
         $request = new GetBalanceRequest();
-        
+
         $this->assertInstanceOf(GetBalanceRequest::class, $request);
     }
 
-    public function test_getRequestPath_returnsCorrectPath(): void
+    public function testGetRequestPathReturnsCorrectPath(): void
     {
         $request = new GetBalanceRequest();
-        
+
         $this->assertEquals('https://api.sms.jpush.cn/v1/accounts/amount', $request->getRequestPath());
     }
 
-    public function test_getRequestMethod_returnsGet(): void
+    public function testGetRequestMethodReturnsGet(): void
     {
         $request = new GetBalanceRequest();
-        
+
         $this->assertEquals('GET', $request->getRequestMethod());
     }
-} 
+}

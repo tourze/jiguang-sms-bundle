@@ -18,6 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class SyncTemplateStatusCommand extends Command
 {
     public const NAME = 'jiguang:sms:sync-template-status';
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly TemplateService $templateService,

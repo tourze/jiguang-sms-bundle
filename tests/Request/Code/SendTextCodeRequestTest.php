@@ -2,12 +2,24 @@
 
 namespace JiguangSmsBundle\Tests\Request\Code;
 
+use HttpClientBundle\Tests\Request\RequestTestCase;
 use JiguangSmsBundle\Request\Code\SendTextCodeRequest;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-class SendTextCodeRequestTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(SendTextCodeRequest::class)]
+final class SendTextCodeRequestTest extends RequestTestCase
 {
-    public function test_constructor_setsDefaultValues(): void
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // 空实现，因为此测试不需要特殊的设置
+    }
+
+    public function testConstructorSetsDefaultValues(): void
     {
         $request = new SendTextCodeRequest();
 
@@ -15,7 +27,7 @@ class SendTextCodeRequestTest extends TestCase
         $this->assertNull($request->getTempId());
     }
 
-    public function test_settersAndGetters_workCorrectly(): void
+    public function testSettersAndGettersWorkCorrectly(): void
     {
         $request = new SendTextCodeRequest();
         $mobile = '13800138000';
@@ -31,14 +43,14 @@ class SendTextCodeRequestTest extends TestCase
         $this->assertEquals($tempId, $request->getTempId());
     }
 
-    public function test_getRequestPath_returnsCorrectPath(): void
+    public function testGetRequestPathReturnsCorrectPath(): void
     {
         $request = new SendTextCodeRequest();
 
         $this->assertEquals('https://api.sms.jpush.cn/v1/codes', $request->getRequestPath());
     }
 
-    public function test_getRequestOptions_returnsCorrectOptions(): void
+    public function testGetRequestOptionsReturnsCorrectOptions(): void
     {
         $request = new SendTextCodeRequest();
         $request->setMobile('13800138000');
@@ -56,7 +68,7 @@ class SendTextCodeRequestTest extends TestCase
         $this->assertEquals($expected, $request->getRequestOptions());
     }
 
-    public function test_getRequestOptions_withoutOptionalFields_returnsMinimalOptions(): void
+    public function testGetRequestOptionsWithoutOptionalFieldsReturnsMinimalOptions(): void
     {
         $request = new SendTextCodeRequest();
         $request->setMobile('13800138000');

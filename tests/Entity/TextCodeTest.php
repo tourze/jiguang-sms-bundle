@@ -3,12 +3,40 @@
 namespace JiguangSmsBundle\Tests\Entity;
 
 use JiguangSmsBundle\Entity\Account;
+use JiguangSmsBundle\Entity\Sign;
+use JiguangSmsBundle\Entity\Template;
 use JiguangSmsBundle\Entity\TextCode;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 
-class TextCodeTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(TextCode::class)]
+final class TextCodeTest extends AbstractEntityTestCase
 {
-    public function test_constructor_setsDefaultValues(): void
+    protected function createEntity(): object
+    {
+        return new TextCode();
+    }
+
+    /** @return iterable<array{string, mixed}> */
+    public static function propertiesProvider(): iterable
+    {
+        yield 'mobile' => ['mobile', '13800138000'];
+        yield 'code' => ['code', '123456'];
+        yield 'ttl' => ['ttl', 300];
+        yield 'msgId' => ['msgId', 'MSG123'];
+        yield 'verified' => ['verified', true];
+        yield 'status' => ['status', 4001];
+        yield 'receiveTime' => ['receiveTime', new \DateTimeImmutable()];
+        yield 'verifyTime' => ['verifyTime', new \DateTimeImmutable()];
+        yield 'template' => ['template', new Template()];
+        yield 'sign' => ['sign', new Sign()];
+    }
+
+    public function testConstructorSetsDefaultValues(): void
     {
         $textCode = new TextCode();
 
@@ -19,7 +47,7 @@ class TextCodeTest extends TestCase
         $this->assertNull($textCode->getSign());
     }
 
-    public function test_settersAndGetters_workCorrectly(): void
+    public function testSettersAndGettersWorkCorrectly(): void
     {
         $textCode = new TextCode();
         $account = new Account();
@@ -41,7 +69,7 @@ class TextCodeTest extends TestCase
         $this->assertTrue($textCode->isDelivered());
     }
 
-    public function test_toString_returnsFormattedString(): void
+    public function testToStringReturnsFormattedString(): void
     {
         $textCode = new TextCode();
         $account = new Account();
@@ -54,7 +82,7 @@ class TextCodeTest extends TestCase
         $this->assertEquals($expected, (string) $textCode);
     }
 
-    public function test_toString_withNullMsgId_returnsDefaultString(): void
+    public function testToStringWithNullMsgIdReturnsDefaultString(): void
     {
         $textCode = new TextCode();
         $account = new Account();
@@ -65,4 +93,4 @@ class TextCodeTest extends TestCase
         $expected = '[13800138000] 123456 - N/A';
         $this->assertEquals($expected, (string) $textCode);
     }
-} 
+}

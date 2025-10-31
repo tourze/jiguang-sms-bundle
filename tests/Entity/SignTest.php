@@ -6,10 +6,35 @@ use JiguangSmsBundle\Entity\Account;
 use JiguangSmsBundle\Entity\Sign;
 use JiguangSmsBundle\Enum\SignStatusEnum;
 use JiguangSmsBundle\Enum\SignTypeEnum;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 
-class SignTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(Sign::class)]
+final class SignTest extends AbstractEntityTestCase
 {
+    protected function createEntity(): object
+    {
+        return new Sign();
+    }
+
+    /** @return iterable<array{string, mixed}> */
+    public static function propertiesProvider(): iterable
+    {
+        yield 'signId' => ['signId', 123];
+        yield 'sign' => ['sign', '测试签名'];
+        yield 'type' => ['type', SignTypeEnum::COMPANY];
+        yield 'remark' => ['remark', '测试备注'];
+        yield 'useStatus' => ['useStatus', true];
+        yield 'status' => ['status', SignStatusEnum::APPROVED];
+        yield 'image0' => ['image0', 'image0.jpg'];
+        yield 'image1' => ['image1', 'image1.jpg'];
+        yield 'syncing' => ['syncing', true];
+    }
+
     public function testGetterAndSetterMethods(): void
     {
         $sign = new Sign();

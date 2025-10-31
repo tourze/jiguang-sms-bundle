@@ -10,9 +10,14 @@ use JiguangSmsBundle\Request\WithAccountRequest;
 class SendMessageRequest extends WithAccountRequest
 {
     protected string $mobile;
+
     protected int $tempId;
+
     protected ?int $signId = null;
+
+    /** @var array<string, mixed>|null */
     protected ?array $tempPara = null;
+
     protected ?string $tag = null;
 
     public function getMobile(): string
@@ -20,10 +25,9 @@ class SendMessageRequest extends WithAccountRequest
         return $this->mobile;
     }
 
-    public function setMobile(string $mobile): self
+    public function setMobile(string $mobile): void
     {
         $this->mobile = $mobile;
-        return $this;
     }
 
     public function getTempId(): int
@@ -31,10 +35,9 @@ class SendMessageRequest extends WithAccountRequest
         return $this->tempId;
     }
 
-    public function setTempId(int $tempId): self
+    public function setTempId(int $tempId): void
     {
         $this->tempId = $tempId;
-        return $this;
     }
 
     public function getSignId(): ?int
@@ -42,21 +45,25 @@ class SendMessageRequest extends WithAccountRequest
         return $this->signId;
     }
 
-    public function setSignId(?int $signId): self
+    public function setSignId(?int $signId): void
     {
         $this->signId = $signId;
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getTempPara(): ?array
     {
         return $this->tempPara;
     }
 
-    public function setTempPara(?array $tempPara): self
+    /**
+     * @param array<string, mixed>|null $tempPara
+     */
+    public function setTempPara(?array $tempPara): void
     {
         $this->tempPara = $tempPara;
-        return $this;
     }
 
     public function getTag(): ?string
@@ -64,10 +71,9 @@ class SendMessageRequest extends WithAccountRequest
         return $this->tag;
     }
 
-    public function setTag(?string $tag): self
+    public function setTag(?string $tag): void
     {
         $this->tag = $tag;
-        return $this;
     }
 
     public function getRequestPath(): string
@@ -75,6 +81,9 @@ class SendMessageRequest extends WithAccountRequest
         return 'https://api.sms.jpush.cn/v1/messages';
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getRequestOptions(): ?array
     {
         $params = [
@@ -82,15 +91,15 @@ class SendMessageRequest extends WithAccountRequest
             'temp_id' => $this->tempId,
         ];
 
-        if ($this->signId !== null) {
+        if (null !== $this->signId) {
             $params['sign_id'] = $this->signId;
         }
 
-        if ($this->tempPara !== null) {
+        if (null !== $this->tempPara) {
             $params['temp_para'] = $this->tempPara;
         }
 
-        if ($this->tag !== null) {
+        if (null !== $this->tag) {
             $params['tag'] = $this->tag;
         }
 

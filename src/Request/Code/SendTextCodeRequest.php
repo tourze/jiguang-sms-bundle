@@ -10,7 +10,9 @@ use JiguangSmsBundle\Request\WithAccountRequest;
 class SendTextCodeRequest extends WithAccountRequest
 {
     protected string $mobile;
+
     protected ?int $signId = null;
+
     protected ?int $tempId = null;
 
     public function getMobile(): string
@@ -18,10 +20,9 @@ class SendTextCodeRequest extends WithAccountRequest
         return $this->mobile;
     }
 
-    public function setMobile(string $mobile): self
+    public function setMobile(string $mobile): void
     {
         $this->mobile = $mobile;
-        return $this;
     }
 
     public function getSignId(): ?int
@@ -29,10 +30,9 @@ class SendTextCodeRequest extends WithAccountRequest
         return $this->signId;
     }
 
-    public function setSignId(?int $signId): self
+    public function setSignId(?int $signId): void
     {
         $this->signId = $signId;
-        return $this;
     }
 
     public function getTempId(): ?int
@@ -40,10 +40,9 @@ class SendTextCodeRequest extends WithAccountRequest
         return $this->tempId;
     }
 
-    public function setTempId(?int $tempId): self
+    public function setTempId(?int $tempId): void
     {
         $this->tempId = $tempId;
-        return $this;
     }
 
     public function getRequestPath(): string
@@ -51,17 +50,20 @@ class SendTextCodeRequest extends WithAccountRequest
         return 'https://api.sms.jpush.cn/v1/codes';
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getRequestOptions(): ?array
     {
         $params = [
             'mobile' => $this->mobile,
         ];
 
-        if ($this->signId !== null) {
+        if (null !== $this->signId) {
             $params['sign_id'] = $this->signId;
         }
 
-        if ($this->tempId !== null) {
+        if (null !== $this->tempId) {
             $params['temp_id'] = $this->tempId;
         }
 

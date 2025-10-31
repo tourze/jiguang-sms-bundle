@@ -4,13 +4,41 @@ namespace JiguangSmsBundle\Tests\Entity;
 
 use JiguangSmsBundle\Entity\Account;
 use JiguangSmsBundle\Entity\Message;
-use JiguangSmsBundle\Entity\Template;
 use JiguangSmsBundle\Entity\Sign;
-use PHPUnit\Framework\TestCase;
+use JiguangSmsBundle\Entity\Template;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 
-class MessageTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(Message::class)]
+final class MessageTest extends AbstractEntityTestCase
 {
-    public function test_constructor_setsDefaultValues(): void
+    protected function setUp(): void
+    {
+        // 空实现，因为此测试不需要特殊的设置
+    }
+
+    protected function createEntity(): object
+    {
+        return new Message();
+    }
+
+    /** @return iterable<array{string, mixed}> */
+    public static function propertiesProvider(): iterable
+    {
+        yield 'msgId' => ['msgId', 'MSG123'];
+        yield 'mobile' => ['mobile', '13800138000'];
+        yield 'status' => ['status', 4001];
+        yield 'receiveTime' => ['receiveTime', new \DateTimeImmutable()];
+        yield 'response' => ['response', ['key' => 'value']];
+        yield 'account' => ['account', new Account()];
+        yield 'template' => ['template', new Template()];
+        yield 'sign' => ['sign', new Sign()];
+    }
+
+    public function testConstructorSetsDefaultValues(): void
     {
         $message = new Message();
 
@@ -21,7 +49,7 @@ class MessageTest extends TestCase
         $this->assertNull($message->getResponse());
     }
 
-    public function test_settersAndGetters_workCorrectly(): void
+    public function testSettersAndGettersWorkCorrectly(): void
     {
         $message = new Message();
         $account = new Account();
@@ -46,7 +74,7 @@ class MessageTest extends TestCase
         $this->assertEquals($status, $message->getStatus());
     }
 
-    public function test_isDelivered_withDeliveredStatus_returnsTrue(): void
+    public function testIsDeliveredWithDeliveredStatusReturnsTrue(): void
     {
         $message = new Message();
         $message->setStatus(4001);
@@ -54,7 +82,7 @@ class MessageTest extends TestCase
         $this->assertTrue($message->isDelivered());
     }
 
-    public function test_isDelivered_withNonDeliveredStatus_returnsFalse(): void
+    public function testIsDeliveredWithNonDeliveredStatusReturnsFalse(): void
     {
         $message = new Message();
         $message->setStatus(4002);
@@ -62,7 +90,7 @@ class MessageTest extends TestCase
         $this->assertFalse($message->isDelivered());
     }
 
-    public function test_toString_returnsFormattedString(): void
+    public function testToStringReturnsFormattedString(): void
     {
         $template = new Template();
         $message = new Message();

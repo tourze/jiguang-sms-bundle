@@ -11,15 +11,16 @@ use JiguangSmsBundle\Request\Sign\GetSignRequest;
 use JiguangSmsBundle\Request\Sign\UpdateSignRequest;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class SignService
+readonly class SignService
 {
     public function __construct(
-        private readonly JiguangSmsService $jiguangSmsService,
+        private JiguangSmsService $jiguangSmsService,
     ) {
     }
 
     /**
      * 创建远程签名
+     *
      * @throws TransportExceptionInterface
      */
     public function createRemoteSign(Sign $sign): void
@@ -29,11 +30,13 @@ class SignService
         $request->setSign($sign);
 
         $data = $this->jiguangSmsService->request($request);
-        $sign->setSignId($data['sign_id']);
+        $signId = is_array($data) && isset($data['sign_id']) && is_int($data['sign_id']) ? $data['sign_id'] : null;
+        $sign->setSignId($signId);
     }
 
     /**
      * 更新远程签名
+     *
      * @throws TransportExceptionInterface
      */
     public function updateRemoteSign(Sign $sign): void
@@ -47,6 +50,7 @@ class SignService
 
     /**
      * 删除远程签名
+     *
      * @throws TransportExceptionInterface
      */
     public function deleteRemoteSign(Sign $sign): void
@@ -60,6 +64,7 @@ class SignService
 
     /**
      * 同步签名状态
+     *
      * @throws TransportExceptionInterface
      */
     public function syncSignStatus(Sign $sign): void
@@ -70,16 +75,21 @@ class SignService
 
         $data = $this->jiguangSmsService->request($request);
 
-        $status = match ($data['status']) {
+        $statusValue = is_array($data) && isset($data['status']) ? $data['status'] : null;
+        if (null === $statusValue) {
+            throw new InvalidSignStatusException('Status not found in response');
+        }
+
+        $status = match ($statusValue) {
             0 => SignStatusEnum::PENDING,
             1 => SignStatusEnum::APPROVED,
             2 => SignStatusEnum::REJECTED,
             3 => SignStatusEnum::DELETED,
-            default => throw new InvalidSignStatusException((string)$data['status']),
+            default => throw new InvalidSignStatusException(is_scalar($statusValue) ? (string) $statusValue : 'Invalid status type'),
         };
         $sign->setStatus($status);
 
-        $sign->setIsDefault((bool)($data['is_default'] ?? false));
-        $sign->setUseStatus((bool)($data['use_status'] ?? false));
+        $sign->setIsDefault((bool) (is_array($data) && isset($data['is_default']) ? $data['is_default'] : false));
+        $sign->setUseStatus((bool) (is_array($data) && isset($data['use_status']) ? $data['use_status'] : false));
     }
 }

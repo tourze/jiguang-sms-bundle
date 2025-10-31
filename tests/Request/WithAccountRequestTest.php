@@ -2,11 +2,16 @@
 
 namespace JiguangSmsBundle\Tests\Request;
 
+use HttpClientBundle\Tests\Request\RequestTestCase;
 use JiguangSmsBundle\Entity\Account;
 use JiguangSmsBundle\Request\WithAccountRequest;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-class WithAccountRequestTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(WithAccountRequest::class)]
+final class WithAccountRequestTest extends RequestTestCase
 {
     /**
      * @var WithAccountRequest
@@ -15,6 +20,8 @@ class WithAccountRequestTest extends TestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         // 创建WithAccountRequest的具体实现，因为它是抽象类
         $this->request = new class extends WithAccountRequest {
             public function getRequestPath(): string
@@ -27,6 +34,9 @@ class WithAccountRequestTest extends TestCase
                 return 'POST';
             }
 
+            /**
+             * @return array<string, mixed>
+             */
             public function getRequestOptions(): array
             {
                 return ['query' => ['param' => 'value']];
@@ -51,6 +61,7 @@ class WithAccountRequestTest extends TestCase
         $this->assertEquals('POST', $this->request->getRequestMethod());
 
         $options = $this->request->getRequestOptions();
+        $this->assertIsArray($options);
         $this->assertArrayHasKey('query', $options);
         $this->assertEquals(['param' => 'value'], $options['query']);
     }

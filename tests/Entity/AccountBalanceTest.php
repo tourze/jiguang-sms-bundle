@@ -4,11 +4,36 @@ namespace JiguangSmsBundle\Tests\Entity;
 
 use JiguangSmsBundle\Entity\Account;
 use JiguangSmsBundle\Entity\AccountBalance;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 
-class AccountBalanceTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(AccountBalance::class)]
+final class AccountBalanceTest extends AbstractEntityTestCase
 {
-    public function test_constructor_setsDefaultValues(): void
+    protected function setUp(): void
+    {
+        // 空实现，因为 AccountBalance 测试不需要特殊的设置
+    }
+
+    protected function createEntity(): object
+    {
+        return new AccountBalance();
+    }
+
+    /** @return iterable<array{string, mixed}> */
+    public static function propertiesProvider(): iterable
+    {
+        yield 'balance' => ['balance', 100];
+        yield 'voice' => ['voice', 50];
+        yield 'industry' => ['industry', 200];
+        yield 'market' => ['market', 300];
+        yield 'account' => ['account', new Account()];
+    }
+
+    public function testConstructorSetsDefaultValues(): void
     {
         $balance = new AccountBalance();
 
@@ -19,7 +44,7 @@ class AccountBalanceTest extends TestCase
         $this->assertNull($balance->getMarket());
     }
 
-    public function test_settersAndGetters_workCorrectly(): void
+    public function testSettersAndGettersWorkCorrectly(): void
     {
         $balance = new AccountBalance();
         $account = new Account();
@@ -41,7 +66,7 @@ class AccountBalanceTest extends TestCase
         $this->assertEquals($marketValue, $balance->getMarket());
     }
 
-    public function test_toString_returnsFormattedString(): void
+    public function testToStringReturnsFormattedString(): void
     {
         $account = new Account();
         $balance = new AccountBalance();
@@ -54,4 +79,4 @@ class AccountBalanceTest extends TestCase
         $this->assertStringContainsString('全类型=100', $result);
         $this->assertStringContainsString('语音=50', $result);
     }
-} 
+}

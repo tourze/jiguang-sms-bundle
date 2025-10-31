@@ -2,13 +2,14 @@
 
 namespace JiguangSmsBundle\Enum;
 
+use Tourze\EnumExtra\BadgeInterface;
 use Tourze\EnumExtra\Itemable;
 use Tourze\EnumExtra\ItemTrait;
 use Tourze\EnumExtra\Labelable;
 use Tourze\EnumExtra\Selectable;
 use Tourze\EnumExtra\SelectTrait;
 
-enum SignTypeEnum: int implements Itemable, Labelable, Selectable
+enum SignTypeEnum: int implements Itemable, Labelable, Selectable, BadgeInterface
 {
     use ItemTrait;
     use SelectTrait;
@@ -42,5 +43,10 @@ enum SignTypeEnum: int implements Itemable, Labelable, Selectable
             self::TRADEMARK => '商标名称全称或简称：需提供签名所属商标注册证书复印件图片及商标主体营业执照复印件图片、对应法人代表身份证正反面复印件图片，均需加盖公章',
             self::OTHER => '其他：申请的签名与所属主体不一致或涉及第三方权益时，需提供第三方授权委托书、第三方签名相关资质',
         };
+    }
+
+    public function getBadge(): string
+    {
+        return self::INFO;
     }
 }

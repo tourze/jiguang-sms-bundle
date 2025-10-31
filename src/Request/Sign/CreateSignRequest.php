@@ -18,6 +18,9 @@ class CreateSignRequest extends AbstractSignRequest
         return 'POST';
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getRequestOptions(): ?array
     {
         $options = [
@@ -33,14 +36,14 @@ class CreateSignRequest extends AbstractSignRequest
             ],
         ];
 
-        if ($this->sign->getRemark() !== null) {
+        if (null !== $this->sign->getRemark()) {
             $options['multipart'][] = [
                 'name' => 'remark',
                 'contents' => $this->sign->getRemark(),
             ];
         }
 
-        if ($this->sign->getImage0() !== null) {
+        if (null !== $this->sign->getImage0()) {
             $options['multipart'][] = [
                 'name' => 'image0',
                 'contents' => fopen($this->sign->getImage0(), 'r'),
@@ -48,7 +51,7 @@ class CreateSignRequest extends AbstractSignRequest
             ];
         }
 
-        if ($this->sign->getImage1() !== null) {
+        if (null !== $this->sign->getImage1()) {
             $options['multipart'][] = [
                 'name' => 'image1',
                 'contents' => fopen($this->sign->getImage1(), 'r'),
@@ -64,9 +67,8 @@ class CreateSignRequest extends AbstractSignRequest
         return $this->sign;
     }
 
-    public function setSign(Sign $sign): self
+    public function setSign(Sign $sign): void
     {
         $this->sign = $sign;
-        return $this;
     }
 }

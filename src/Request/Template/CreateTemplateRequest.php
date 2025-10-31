@@ -18,6 +18,9 @@ class CreateTemplateRequest extends AbstractTemplateRequest
         return 'POST';
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getRequestOptions(): ?array
     {
         return [
@@ -35,9 +38,8 @@ class CreateTemplateRequest extends AbstractTemplateRequest
         return $this->template;
     }
 
-    public function setTemplate(Template $template): self
+    public function setTemplate(Template $template): void
     {
         $this->template = $template;
-        return $this;
     }
 }

@@ -4,28 +4,37 @@ namespace JiguangSmsBundle\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 
 #[ORM\MappedSuperclass]
 abstract class AbstractCode implements \Stringable
 {
     use TimestampableAware;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
-    private ?int $id = 0;
+    protected int $id = 0;
 
-    #[ORM\ManyToOne(targetEntity: Account::class)]
+    #[ORM\ManyToOne(targetEntity: Account::class, cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false, options: ['comment' => '所属账号'])]
     protected Account $account;
 
     #[ORM\Column(type: Types::STRING, length: 20, options: ['comment' => '手机号'])]
+    #[Assert\NotBlank(message: '手机号不能为空')]
+    #[Assert\Length(max: 20)]
+    #[Assert\Regex(pattern: '/^1[3-9]\d{9}$/', message: '请输入正确的手机号码')]
     protected string $mobile;
 
     #[ORM\Column(type: Types::STRING, length: 6, options: ['comment' => '验证码'])]
+    #[Assert\NotBlank(message: '验证码不能为空')]
+    #[Assert\Length(min: 4, max: 6)]
+    #[Assert\Regex(pattern: '/^\d+$/', message: '验证码只能包含数字')]
     protected string $code;
 
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => '有效期(秒)'])]
+    #[Assert\PositiveOrZero(message: '有效期必须大于或等于0')]
     protected int $ttl = 60;
 
     #[ORM\Column(type: Types::STRING, length: 32, nullable: true, options: ['comment' => '消息ID'])]
@@ -43,7 +52,7 @@ abstract class AbstractCode implements \Stringable
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['comment' => '验证时间'])]
     protected ?\DateTimeImmutable $verifyTime = null;
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -53,10 +62,9 @@ abstract class AbstractCode implements \Stringable
         return $this->account;
     }
 
-    public function setAccount(Account $account): self
+    public function setAccount(Account $account): void
     {
         $this->account = $account;
-        return $this;
     }
 
     public function getMobile(): string
@@ -64,10 +72,9 @@ abstract class AbstractCode implements \Stringable
         return $this->mobile;
     }
 
-    public function setMobile(string $mobile): self
+    public function setMobile(string $mobile): void
     {
         $this->mobile = $mobile;
-        return $this;
     }
 
     public function getCode(): string
@@ -75,10 +82,9 @@ abstract class AbstractCode implements \Stringable
         return $this->code;
     }
 
-    public function setCode(string $code): self
+    public function setCode(string $code): void
     {
         $this->code = $code;
-        return $this;
     }
 
     public function getTtl(): int
@@ -86,10 +92,9 @@ abstract class AbstractCode implements \Stringable
         return $this->ttl;
     }
 
-    public function setTtl(int $ttl): self
+    public function setTtl(int $ttl): void
     {
         $this->ttl = $ttl;
-        return $this;
     }
 
     public function getMsgId(): ?string
@@ -97,10 +102,9 @@ abstract class AbstractCode implements \Stringable
         return $this->msgId;
     }
 
-    public function setMsgId(?string $msgId): self
+    public function setMsgId(?string $msgId): void
     {
         $this->msgId = $msgId;
-        return $this;
     }
 
     public function isVerified(): bool
@@ -108,13 +112,12 @@ abstract class AbstractCode implements \Stringable
         return $this->verified;
     }
 
-    public function setVerified(bool $verified): self
+    public function setVerified(bool $verified): void
     {
         $this->verified = $verified;
         if ($verified) {
             $this->verifyTime = new \DateTimeImmutable();
         }
-        return $this;
     }
 
     public function getVerifyTime(): ?\DateTimeImmutable
@@ -122,10 +125,9 @@ abstract class AbstractCode implements \Stringable
         return $this->verifyTime;
     }
 
-    public function setVerifyTime(?\DateTimeImmutable $verifyTime): self
+    public function setVerifyTime(?\DateTimeImmutable $verifyTime): void
     {
         $this->verifyTime = $verifyTime;
-        return $this;
     }
 
     public function getStatus(): ?int
@@ -133,10 +135,9 @@ abstract class AbstractCode implements \Stringable
         return $this->status;
     }
 
-    public function setStatus(?int $status): self
+    public function setStatus(?int $status): void
     {
         $this->status = $status;
-        return $this;
     }
 
     public function getReceiveTime(): ?\DateTimeImmutable
@@ -144,15 +145,14 @@ abstract class AbstractCode implements \Stringable
         return $this->receiveTime;
     }
 
-    public function setReceiveTime(?\DateTimeImmutable $receiveTime): self
+    public function setReceiveTime(?\DateTimeImmutable $receiveTime): void
     {
         $this->receiveTime = $receiveTime;
-        return $this;
     }
 
     public function isDelivered(): bool
     {
-        return $this->status === 4001;
+        return 4001 === $this->status;
     }
 
     public function __toString(): string

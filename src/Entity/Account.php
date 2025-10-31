@@ -5,6 +5,7 @@ namespace JiguangSmsBundle\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JiguangSmsBundle\Repository\AccountRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
@@ -16,27 +17,34 @@ class Account implements \Stringable
 {
     use TimestampableAware;
     use BlameableAware;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
-    private ?int $id = 0;
+    private int $id = 0;
 
     #[ORM\Column(length: 100, options: ['comment' => '标题'])]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 100)]
     private ?string $title = null;
 
     #[ORM\Column(length: 64, unique: true, options: ['comment' => 'AppKey'])]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 64)]
     private ?string $appKey = null;
 
     #[ORM\Column(length: 128, options: ['comment' => 'MasterSecret'])]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 128)]
     private ?string $masterSecret = null;
 
     #[IndexColumn]
     #[TrackColumn]
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['comment' => '有效', 'default' => 0])]
+    #[Assert\Type(type: 'bool')]
     private ?bool $valid = false;
 
-
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -46,11 +54,9 @@ class Account implements \Stringable
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function setTitle(string $title): void
     {
         $this->title = $title;
-
-        return $this;
     }
 
     public function getAppKey(): ?string
@@ -58,11 +64,9 @@ class Account implements \Stringable
         return $this->appKey;
     }
 
-    public function setAppKey(string $appKey): static
+    public function setAppKey(string $appKey): void
     {
         $this->appKey = $appKey;
-
-        return $this;
     }
 
     public function getMasterSecret(): ?string
@@ -70,11 +74,9 @@ class Account implements \Stringable
         return $this->masterSecret;
     }
 
-    public function setMasterSecret(string $masterSecret): static
+    public function setMasterSecret(string $masterSecret): void
     {
         $this->masterSecret = $masterSecret;
-
-        return $this;
     }
 
     public function isValid(): ?bool
@@ -82,14 +84,13 @@ class Account implements \Stringable
         return $this->valid;
     }
 
-    public function setValid(?bool $valid): self
+    public function setValid(?bool $valid): void
     {
         $this->valid = $valid;
-
-        return $this;
     }
 
     public function __toString(): string
     {
         return sprintf('%s (%s)', $this->title ?? '', $this->appKey ?? '');
-    }}
+    }
+}

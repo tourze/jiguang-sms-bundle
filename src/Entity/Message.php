@@ -5,6 +5,7 @@ namespace JiguangSmsBundle\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JiguangSmsBundle\Repository\MessageRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
@@ -12,45 +13,57 @@ use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 class Message implements \Stringable
 {
     use TimestampableAware;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
-    private ?int $id = 0;
+    private int $id = 0;
 
-    #[ORM\ManyToOne(targetEntity: Account::class)]
+    #[ORM\ManyToOne(targetEntity: Account::class, cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false, options: ['comment' => '所属账号'])]
     private Account $account;
 
     #[ORM\Column(type: Types::STRING, length: 20, options: ['comment' => '手机号'])]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 20)]
+    #[Assert\Regex(pattern: '/^1[3-9]\d{9}$/', message: '请输入正确的手机号码')]
     private string $mobile;
 
     #[ORM\Column(type: Types::STRING, length: 32, nullable: true, options: ['comment' => '消息ID'])]
+    #[Assert\Length(max: 32)]
     private ?string $msgId = null;
 
-    #[ORM\ManyToOne(targetEntity: Template::class)]
+    #[ORM\ManyToOne(targetEntity: Template::class, cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false, options: ['comment' => '短信模板'])]
     private Template $template;
 
-    #[ORM\ManyToOne(targetEntity: Sign::class)]
+    #[ORM\ManyToOne(targetEntity: Sign::class, cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: true, options: ['comment' => '短信签名'])]
     private ?Sign $sign = null;
 
+    /** @var array<string, mixed>|null */
     #[ORM\Column(type: Types::JSON, nullable: true, options: ['comment' => '模板参数'])]
+    #[Assert\Type(type: 'array')]
     private ?array $templateParams = null;
 
     #[ORM\Column(type: Types::STRING, length: 50, nullable: true, options: ['comment' => '标签'])]
+    #[Assert\Length(max: 50)]
     private ?string $tag = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['comment' => '发送状态码'])]
+    #[Assert\Type(type: 'integer')]
     private ?int $status = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['comment' => '状态接收时间'])]
+    #[Assert\Type(type: \DateTimeImmutable::class)]
     private ?\DateTimeImmutable $receiveTime = null;
 
+    /** @var array<string, mixed>|null */
     #[ORM\Column(type: Types::JSON, nullable: true, options: ['comment' => '发送结果'])]
+    #[Assert\Type(type: 'array')]
     private ?array $response = null;
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -60,10 +73,9 @@ class Message implements \Stringable
         return $this->account;
     }
 
-    public function setAccount(Account $account): self
+    public function setAccount(Account $account): void
     {
         $this->account = $account;
-        return $this;
     }
 
     public function getMobile(): string
@@ -71,10 +83,9 @@ class Message implements \Stringable
         return $this->mobile;
     }
 
-    public function setMobile(string $mobile): self
+    public function setMobile(string $mobile): void
     {
         $this->mobile = $mobile;
-        return $this;
     }
 
     public function getMsgId(): ?string
@@ -82,10 +93,9 @@ class Message implements \Stringable
         return $this->msgId;
     }
 
-    public function setMsgId(?string $msgId): self
+    public function setMsgId(?string $msgId): void
     {
         $this->msgId = $msgId;
-        return $this;
     }
 
     public function getTemplate(): Template
@@ -93,10 +103,9 @@ class Message implements \Stringable
         return $this->template;
     }
 
-    public function setTemplate(Template $template): self
+    public function setTemplate(Template $template): void
     {
         $this->template = $template;
-        return $this;
     }
 
     public function getSign(): ?Sign
@@ -104,21 +113,25 @@ class Message implements \Stringable
         return $this->sign;
     }
 
-    public function setSign(?Sign $sign): self
+    public function setSign(?Sign $sign): void
     {
         $this->sign = $sign;
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getTemplateParams(): ?array
     {
         return $this->templateParams;
     }
 
-    public function setTemplateParams(?array $templateParams): self
+    /**
+     * @param array<string, mixed>|null $templateParams
+     */
+    public function setTemplateParams(?array $templateParams): void
     {
         $this->templateParams = $templateParams;
-        return $this;
     }
 
     public function getTag(): ?string
@@ -126,10 +139,9 @@ class Message implements \Stringable
         return $this->tag;
     }
 
-    public function setTag(?string $tag): self
+    public function setTag(?string $tag): void
     {
         $this->tag = $tag;
-        return $this;
     }
 
     public function getStatus(): ?int
@@ -137,10 +149,9 @@ class Message implements \Stringable
         return $this->status;
     }
 
-    public function setStatus(?int $status): self
+    public function setStatus(?int $status): void
     {
         $this->status = $status;
-        return $this;
     }
 
     public function getReceiveTime(): ?\DateTimeImmutable
@@ -148,26 +159,30 @@ class Message implements \Stringable
         return $this->receiveTime;
     }
 
-    public function setReceiveTime(?\DateTimeImmutable $receiveTime): self
+    public function setReceiveTime(?\DateTimeImmutable $receiveTime): void
     {
         $this->receiveTime = $receiveTime;
-        return $this;
     }
 
     public function isDelivered(): bool
     {
-        return $this->status === 4001;
+        return 4001 === $this->status;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getResponse(): ?array
     {
         return $this->response;
     }
 
-    public function setResponse(?array $response): self
+    /**
+     * @param array<string, mixed>|null $response
+     */
+    public function setResponse(?array $response): void
     {
         $this->response = $response;
-        return $this;
     }
 
     public function __toString(): string

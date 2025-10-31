@@ -5,6 +5,7 @@ namespace JiguangSmsBundle\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JiguangSmsBundle\Repository\AccountBalanceRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 
 #[ORM\Entity(repositoryClass: AccountBalanceRepository::class)]
@@ -12,28 +13,33 @@ use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 class AccountBalance implements \Stringable
 {
     use TimestampableAware;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
-    private ?int $id = 0;
+    private int $id = 0;
 
-    #[ORM\OneToOne(targetEntity: Account::class)]
+    #[ORM\OneToOne(targetEntity: Account::class, cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false, options: ['comment' => '账号ID'])]
     private Account $account;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['comment' => '全类型短信余量'])]
+    #[Assert\PositiveOrZero]
     private ?int $balance = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['comment' => '语音短信余量'])]
+    #[Assert\PositiveOrZero]
     private ?int $voice = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['comment' => '行业短信余量'])]
+    #[Assert\PositiveOrZero]
     private ?int $industry = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['comment' => '营销短信余量'])]
+    #[Assert\PositiveOrZero]
     private ?int $market = null;
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -43,10 +49,9 @@ class AccountBalance implements \Stringable
         return $this->account;
     }
 
-    public function setAccount(Account $account): self
+    public function setAccount(Account $account): void
     {
         $this->account = $account;
-        return $this;
     }
 
     public function getBalance(): ?int
@@ -54,10 +59,9 @@ class AccountBalance implements \Stringable
         return $this->balance;
     }
 
-    public function setBalance(?int $balance): self
+    public function setBalance(?int $balance): void
     {
         $this->balance = $balance;
-        return $this;
     }
 
     public function getVoice(): ?int
@@ -65,10 +69,9 @@ class AccountBalance implements \Stringable
         return $this->voice;
     }
 
-    public function setVoice(?int $voice): self
+    public function setVoice(?int $voice): void
     {
         $this->voice = $voice;
-        return $this;
     }
 
     public function getIndustry(): ?int
@@ -76,10 +79,9 @@ class AccountBalance implements \Stringable
         return $this->industry;
     }
 
-    public function setIndustry(?int $industry): self
+    public function setIndustry(?int $industry): void
     {
         $this->industry = $industry;
-        return $this;
     }
 
     public function getMarket(): ?int
@@ -87,19 +89,19 @@ class AccountBalance implements \Stringable
         return $this->market;
     }
 
-    public function setMarket(?int $market): self
+    public function setMarket(?int $market): void
     {
         $this->market = $market;
-        return $this;
     }
 
     public function __toString(): string
     {
-        return sprintf('账号%s 余量: 全类型=%d, 语音=%d, 行业=%d, 营销=%d', 
+        return sprintf('账号%s 余量: 全类型=%d, 语音=%d, 行业=%d, 营销=%d',
             $this->account->getTitle() ?? 'Unknown',
             $this->balance ?? 0,
             $this->voice ?? 0,
             $this->industry ?? 0,
             $this->market ?? 0
         );
-    }}
+    }
+}

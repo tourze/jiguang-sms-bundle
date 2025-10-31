@@ -18,6 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class SyncSignStatusCommand extends Command
 {
     public const NAME = 'jiguang:sms:sync-sign-status';
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly SignService $signService,

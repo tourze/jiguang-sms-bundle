@@ -23,6 +23,7 @@ use Tourze\Symfony\CronJob\Attribute\AsCronTask;
 class SyncAccountBalanceCommand extends Command
 {
     public const NAME = 'jiguang:sms:sync-account-balance';
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly AccountRepository $accountRepository,
@@ -52,12 +53,27 @@ class SyncAccountBalanceCommand extends Command
         $response = $this->jiguangSmsService->request($request);
 
         $balance = $this->accountBalanceRepository->findOneBy(['account' => $account]) ?? new AccountBalance();
-        $balance->setAccount($account)
-            ->setBalance($response['dev_balance'] ?? null)
-            ->setVoice($response['voice_balance'] ?? null)
-            ->setIndustry($response['industry_balance'] ?? null)
-            ->setMarket($response['market_balance'] ?? null);
+        $balance->setAccount($account);
 
+        $this->updateBalanceFromResponse($balance, $response);
         $this->entityManager->persist($balance);
+    }
+
+    private function updateBalanceFromResponse(AccountBalance $balance, mixed $response): void
+    {
+        $devBalance = $this->extractIntValue($response, 'dev_balance');
+        $voiceBalance = $this->extractIntValue($response, 'voice_balance');
+        $industryBalance = $this->extractIntValue($response, 'industry_balance');
+        $marketBalance = $this->extractIntValue($response, 'market_balance');
+
+        $balance->setBalance($devBalance);
+        $balance->setVoice($voiceBalance);
+        $balance->setIndustry($industryBalance);
+        $balance->setMarket($marketBalance);
+    }
+
+    private function extractIntValue(mixed $data, string $key): ?int
+    {
+        return is_array($data) && isset($data[$key]) && is_int($data[$key]) ? $data[$key] : null;
     }
 }
