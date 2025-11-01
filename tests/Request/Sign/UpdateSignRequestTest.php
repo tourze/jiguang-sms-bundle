@@ -2,7 +2,7 @@
 
 namespace JiguangSmsBundle\Tests\Request\Sign;
 
-use HttpClientBundle\Tests\Request\RequestTestCase;
+use HttpClientBundle\Test\RequestTestCase;
 use JiguangSmsBundle\Entity\Sign;
 use JiguangSmsBundle\Enum\SignTypeEnum;
 use JiguangSmsBundle\Request\Sign\UpdateSignRequest;

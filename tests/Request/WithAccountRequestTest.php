@@ -2,7 +2,7 @@
 
 namespace JiguangSmsBundle\Tests\Request;
 
-use HttpClientBundle\Tests\Request\RequestTestCase;
+use HttpClientBundle\Test\RequestTestCase;
 use JiguangSmsBundle\Entity\Account;
 use JiguangSmsBundle\Request\WithAccountRequest;
 use PHPUnit\Framework\Attributes\CoversClass;

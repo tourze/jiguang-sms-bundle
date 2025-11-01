@@ -2,7 +2,7 @@
 
 namespace JiguangSmsBundle\Tests\Request\Template;
 
-use HttpClientBundle\Tests\Request\RequestTestCase;
+use HttpClientBundle\Test\RequestTestCase;
 use JiguangSmsBundle\Entity\Template;
 use JiguangSmsBundle\Enum\TemplateTypeEnum;
 use JiguangSmsBundle\Request\Template\UpdateTemplateRequest;

@@ -2,10 +2,9 @@
 
 namespace JiguangSmsBundle\Tests\Request\Code;
 
-use HttpClientBundle\Tests\Request\RequestTestCase;
+use HttpClientBundle\Test\RequestTestCase;
 use JiguangSmsBundle\Request\Code\VerifyCodeRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * @internal

@@ -2,7 +2,7 @@
 
 namespace JiguangSmsBundle\Tests\Request\Sign;
 
-use HttpClientBundle\Tests\Request\RequestTestCase;
+use HttpClientBundle\Test\RequestTestCase;
 use JiguangSmsBundle\Request\Sign\AbstractSignRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
 
