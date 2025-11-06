@@ -42,7 +42,6 @@ final class SignServiceTest extends AbstractIntegrationTestCase
 
         // 直接实例化 SignService，避免服务容器的限制
         // 由于服务容器限制无法替换已初始化的服务，这是当前最佳解决方案
-        // @phpstan-ignore integrationTest.noDirectInstantiationOfCoveredClass
         $signService = new SignService($jiguangSmsService);
 
         return [$jiguangSmsService, $signService];

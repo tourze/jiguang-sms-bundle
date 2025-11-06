@@ -88,18 +88,32 @@ final class SignCrudController extends AbstractCrudController
         yield BooleanField::new('useStatus', '使用状态')
             ->setHelp('当前是否在使用中')
         ;
-        yield ImageField::new('image0', '资质证件1')
+        $image0Field = ImageField::new('image0', '资质证件1')
             ->setBasePath('uploads/jiguang-sms/signs')
             ->setUploadDir('public/uploads/jiguang-sms/signs')
             ->setUploadedFileNamePattern('[randomhash].[extension]')
             ->hideOnIndex()
         ;
-        yield ImageField::new('image1', '资质证件2')
+
+        // 测试环境设置上传目录
+        if ($this->getParameter('kernel.environment') === 'test') {
+            $image0Field->setFormTypeOption('upload_dir', sys_get_temp_dir() . '/jiguang-sms-test-uploads/public/uploads/jiguang-sms/signs');
+        }
+
+        yield $image0Field;
+        $image1Field = ImageField::new('image1', '资质证件2')
             ->setBasePath('uploads/jiguang-sms/signs')
             ->setUploadDir('public/uploads/jiguang-sms/signs')
             ->setUploadedFileNamePattern('[randomhash].[extension]')
             ->hideOnIndex()
         ;
+
+        // 测试环境设置上传目录
+        if ($this->getParameter('kernel.environment') === 'test') {
+            $image1Field->setFormTypeOption('upload_dir', sys_get_temp_dir() . '/jiguang-sms-test-uploads/public/uploads/jiguang-sms/signs');
+        }
+
+        yield $image1Field;
         yield DateTimeField::new('createTime', '创建时间')
             ->hideOnForm()
         ;

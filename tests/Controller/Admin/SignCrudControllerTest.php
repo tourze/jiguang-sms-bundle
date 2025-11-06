@@ -19,6 +19,31 @@ use Tourze\PHPUnitSymfonyWebTest\AbstractEasyAdminControllerTestCase;
 #[RunTestsInSeparateProcesses]
 final class SignCrudControllerTest extends AbstractEasyAdminControllerTestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+
+        // 创建测试所需的上传目录
+        // Symfony 测试框架会在 sys_get_temp_dir() 下创建临时目录
+        $tempDir = sys_get_temp_dir();
+
+        // 查找以 symfony-test-JiguangSmsBundle 开头的目录
+        $foundDirs = glob($tempDir . '/symfony-test-JiguangSmsBundle*');
+
+        foreach ($foundDirs as $baseTempDir) {
+            // 为每个找到的临时目录创建上传目录
+            $uploadDir = $baseTempDir . '/public/uploads/jiguang-sms/signs';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+        }
+
+        // 也创建通用测试目录以防万一
+        $generalUploadDir = sys_get_temp_dir() . '/jiguang-sms-test-uploads/public/uploads/jiguang-sms/signs';
+        if (!is_dir($generalUploadDir)) {
+            mkdir($generalUploadDir, 0777, true);
+        }
+    }
     protected function getEntityFqcn(): string
     {
         return Sign::class;
@@ -77,7 +102,7 @@ final class SignCrudControllerTest extends AbstractEasyAdminControllerTestCase
     public function testCreateSign(): void
     {
         // Test that the controller methods work correctly
-        $controller = new SignCrudController();
+        $controller = $this->getControllerService();
         $fields = $controller->configureFields('new');
         $fieldsArray = iterator_to_array($fields);
         self::assertNotEmpty($fieldsArray);
@@ -86,7 +111,7 @@ final class SignCrudControllerTest extends AbstractEasyAdminControllerTestCase
     public function testEditSign(): void
     {
         // Test that configureFields returns appropriate fields
-        $controller = new SignCrudController();
+        $controller = $this->getControllerService();
         $fields = $controller->configureFields('edit');
         $fieldsArray = iterator_to_array($fields);
         self::assertNotEmpty($fieldsArray);
@@ -95,7 +120,7 @@ final class SignCrudControllerTest extends AbstractEasyAdminControllerTestCase
     public function testDetailSign(): void
     {
         // Test that configureFields returns appropriate fields for detail view
-        $controller = new SignCrudController();
+        $controller = $this->getControllerService();
         $fields = $controller->configureFields('detail');
         $fieldsArray = iterator_to_array($fields);
         self::assertNotEmpty($fieldsArray);
