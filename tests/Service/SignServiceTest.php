@@ -40,9 +40,11 @@ final class SignServiceTest extends AbstractIntegrationTestCase
         /** @var MockObject&JiguangSmsService $jiguangSmsService */
         $jiguangSmsService = $this->createMock(JiguangSmsService::class);
 
-        // 直接实例化 SignService，避免服务容器的限制
-        // 由于服务容器限制无法替换已初始化的服务，这是当前最佳解决方案
-        $signService = new SignService($jiguangSmsService);
+        // 在服务容器中注册 Mock 的 JiguangSmsService
+        static::getContainer()->set(JiguangSmsService::class, $jiguangSmsService);
+
+        // 从容器中获取 SignService 实例
+        $signService = self::getService(SignService::class);
 
         return [$jiguangSmsService, $signService];
     }
